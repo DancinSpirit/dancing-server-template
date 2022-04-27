@@ -1,0 +1,42 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html{
+  height: 100%;
+  width: 100%;
+}
+body{
+  height: 100%;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+#sub-base-container-container{
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+#sub-base-container{
+  height: 200%;
+  width: 200%;
+  display: flex;
+}
+#sub-base, #old-sub-base{
+  height: 50%;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+animation, component{
+  display: none;
+}
+.clickable{
+  cursor:pointer;
+}
+.invisible{
+  display: none;
+}
