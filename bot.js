@@ -20,5 +20,4 @@ stdin.addListener("data", function(d){
     }
 })
 
-//Tina: "599370909865738241"
-//Kristian: "135619208468758528"
+module.exports = bot;
