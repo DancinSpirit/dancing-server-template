@@ -90,8 +90,14 @@ const componentCheck = async function(component){
             components.push(component.split("<component>")[y].split("</component>")[0]);
         }
         for(let y=0; y<components.length; y++){
-            let databaseObjects = [{name: components[y].split("|")[1],id: components[y].split("|")[2]}];
-            let customData = [{name: components[y].split("|")[2],id: components[y].split("|")[3]}]
+            let databaseObjects = [];
+            let customData = {};
+            for(let x=0; x<components[y].split("|")[1].split("=").length; x=x+2){
+                databaseObjects.push({name: components[y].split("|")[1].split("=")[x], id: components[y].split("|")[1].split("=")[x+1]});
+            }
+            for(let x=0; x<components[y].split("|")[2].split("=").length; x=x+2){
+                customData[components[y].split("|")[2].split("=")[x]] = components[y].split("|")[2].split("=")[x+1];
+            }
             let newComponent = await loadComponent(components[y].split("|")[0], databaseObjects, customData); 
             newComponent = await componentCheck(newComponent);
             component = component.replace("<component>" + components[y] + "</component>", newComponent);
@@ -102,7 +108,7 @@ const componentCheck = async function(component){
 
 const loadState = async function(x, animation){
     $("head").append(`<link rel="stylesheet" href="/styles/${states[x]}.css">`)
-    let component = await loadComponent(states[x],[databaseObjects[x]],[customData[x]]);    
+    let component = await loadComponent(states[x],databaseObjects[x],customData[x]);    
     if(component.includes("<background>")){
         $("body").css("background-image",`url("${component.split("<background>")[1].split("</background>")[0]}"`);
     }
