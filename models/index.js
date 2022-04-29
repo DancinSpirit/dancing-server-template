@@ -20,5 +20,5 @@ mongoose.connection.on("error", function(err){
 });
 
 module.exports = {
-    Thing: require("./Thing"),
+    User: require("./User"),
 }

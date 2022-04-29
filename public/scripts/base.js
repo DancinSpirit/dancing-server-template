@@ -4,6 +4,47 @@ if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine
     isMobile = true;
 }
 
+const login = async function(username, password){
+    return new Promise((resolve)=>{
+        $.ajax({
+            method: "POST",
+            url: `/login`,
+            data: {username, password},
+            success: (res)=>{
+                user = res.user;
+                resolve(res);
+            }
+        }) 
+    })
+}
+
+const register = async function(username, password){
+    return new Promise((resolve)=>{
+        $.ajax({
+            method: "POST",
+            url: `/register`,
+            data: {username, password},
+            success: (res)=>{
+                user = res.user;
+                resolve(res);
+            }
+        }) 
+    })
+}
+
+const logout = async function(){
+    return new Promise((resolve)=>{
+        $.ajax({
+            method: "POST",
+            url: `/logout`,
+            success: (res)=>{
+                user = false;
+                resolve(res);
+            }
+        }) 
+    })
+}
+
 const loadDatabaseObject = async function(name, id){
     return new Promise((resolve)=>{
         $.ajax({
