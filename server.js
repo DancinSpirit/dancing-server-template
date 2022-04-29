@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const ejs = require('ejs');
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 app.use(express.urlencoded({extended:true}));
@@ -79,25 +80,20 @@ app.get("/", function(req,res){
 /* Page Loading */
 app.get("/*", function(req, res){
     let states = [];
-    let databaseObjects = [];
-    let customData = [];
-    let databaseObject = {};
-    let customSpecificData = {};
+    let databaseObjects;
+    let customData;
+    if(req.body.databaseObjects){
+        databaseObjects = req.body.databaseObjects;
+    }else{
+        databaseObjects = false;
+    }
+    if(req.body.customData){
+        customData = req.body.customData;
+    }else{
+        customData = false;
+    }
     for(let x=1; x<req.url.split("/").length; x++){
-        if(req.url.split("/")[x].includes("%7C")){
-            databaseObject.name = req.url.split("/")[x].split("%7C")[1].split("=")[0].charAt(0).toUpperCase() + req.url.split("/")[x].split("%7C")[1].split("=")[0].slice(1); 
-            databaseObject.id = req.url.split("/")[x].split("%7C")[1].split("=")[1];
-        }else{
-            databaseObject = {};
-        }
-        if(req.url.split("/")[x].includes("&#62;")){
-            customSpecificData[req.url.split("/")[x].split("&#62;")[1].split("=")[0]] = req.url.split("/")[x].split("&#62;")[1].split("=")[1];
-        }else{  
-            customSpecificData = {};
-        }
-        databaseObjects.push(databaseObject);
-        customData.push(customSpecificData);
-        states.push(req.url.split("/")[x].split("%7C")[0].split("&#62;")[0]);
+        states.push(req.url.split("/")[x]);
     }
     res.render('base',{states: states, databaseObjects: databaseObjects, customData: customData});
 })
@@ -127,7 +123,12 @@ app.post("/component/:component", async function(req,res){
             data[req.body.databaseObjects[x].name]  = await eval(`db.${req.body.databaseObjects[x].name}.findById('${req.body.databaseObjects[x].id}')`)
         }
     }
-    res.render(url, data);
+    ejs.renderFile("views/"+url+".ejs", data, (err, result) => {
+        if (err) {
+            res.render("error",{error:err});
+        }
+            res.send(result);
+    });
 })
 
 /* Socket.IO */

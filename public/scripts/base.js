@@ -102,15 +102,7 @@ const componentCheck = async function(component){
 
 const loadState = async function(x, animation){
     $("head").append(`<link rel="stylesheet" href="/styles/${states[x]}.css">`)
-    if(states[x].includes("%3E")){
-        states[x] = states[x].replace(/%3E/g, ">")
-    }
-    let component;
-    if(!jQuery.isEmptyObject(databaseObjects[x])){
-        component = await loadComponent(states[x],[databaseObjects[x]],[customData[x]]);    
-    }else{
-        component = await loadComponent(states[x]);
-    }
+    let component = await loadComponent(states[x],[databaseObjects[x]],[customData[x]]);    
     if(component.includes("<background>")){
         $("body").css("background-image",`url("${component.split("<background>")[1].split("</background>")[0]}"`);
     }

@@ -40,3 +40,8 @@ animation, component{
 .invisible{
   display: none;
 }
+
+#error-box{
+  display:flex;
+  flex-direction: column;
+}
