@@ -4,7 +4,7 @@ if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine
     isMobile = true;
 }
 
-const loadModel = async function(name, id){
+const loadDatabaseObject = async function(name, id){
     return new Promise((resolve)=>{
         $.ajax({
             method: "GET",
@@ -16,7 +16,7 @@ const loadModel = async function(name, id){
     })
 }
 
-const updateModel = async function(name,id,data){
+const updateDatabaseObject = async function(name,id,data){
     return new Promise((resolve)=>{
         $.ajax({
             method: "POST",
@@ -29,12 +29,12 @@ const updateModel = async function(name,id,data){
     })
 }
 
-const loadComponent = async function(component,data){
+const loadComponent = async function(component, databaseObjects, customData){
     return new Promise((resolve)=>{
         $.ajax({
             method: "POST",
             url: `/component/${component}`,
-            data: data,
+            data: {databaseObjects: databaseObjects, customData: customData},
             success: (res)=>{
                 resolve(res);
             }
@@ -49,8 +49,9 @@ const componentCheck = async function(component){
             components.push(component.split("<component>")[y].split("</component>")[0]);
         }
         for(let y=0; y<components.length; y++){
-            let data = {model: {name: components[y].split("|")[1],id: components[y].split("|")[2]}};
-            let newComponent = await loadComponent(components[y].split("|")[0],data); 
+            let databaseObjects = [{name: components[y].split("|")[1],id: components[y].split("|")[2]}];
+            let customData = [{name: components[y].split("|")[2],id: components[y].split("|")[3]}]
+            let newComponent = await loadComponent(components[y].split("|")[0], databaseObjects, customData); 
             newComponent = await componentCheck(newComponent);
             component = component.replace("<component>" + components[y] + "</component>", newComponent);
         }
@@ -64,8 +65,8 @@ const loadState = async function(x, animation){
         states[x] = states[x].replace(/%3E/g, ">")
     }
     let component;
-    if(!jQuery.isEmptyObject(models[x])){
-        component = await loadComponent(states[x],{model: models[x]});    
+    if(!jQuery.isEmptyObject(databaseObjects[x])){
+        component = await loadComponent(states[x],[databaseObjects[x]],[customData[x]]);    
     }else{
         component = await loadComponent(states[x]);
     }
@@ -96,15 +97,15 @@ const loadStates = async function(){
     }
 }
 
-window.history.replaceState({states:states,models:models}, "start", window.location.href);
+window.history.replaceState({states:states,databaseObjects:databaseObjects,customData:customData}, "start", window.location.href);
 
 loadStates();
 
 window.addEventListener('popstate',async function(event){
-    console.log("HELLO!")
     for(let x=0; x<event.state.states.length; x++){
         states = event.state.states;
-        models = event.state.models;
+        databaseObjects = event.state.databaseObjects;
+        customData = event.state.customData;
         await loadState(x);
     }
 })
