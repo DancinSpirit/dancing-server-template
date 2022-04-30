@@ -120,14 +120,15 @@ app.post("/update/:databaseObject/:id", async function(req,res){
 app.post("/component/:component", async function(req,res){
     let data = {};
     let url = `components/${req.params.component.toLowerCase()}`;
-    if(req.body.customData != "false"){
+    if((req.body.customData != "false")&&(typeof req.body.customData != "undefined")){
         data = req.body.customData;
     }
-    if(req.body.databaseObjects != "false"){
+    if(req.body.databaseObjects != "false"&&(typeof req.body.databaseObjects != "undefined")){
         for(let x=0; x<req.body.databaseObjects.length; x++){
             data[req.body.databaseObjects[x].name]  = await eval(`db.${req.body.databaseObjects[x].name}.findById('${req.body.databaseObjects[x].id}')`)
         }
     }
+    console.log(data)
     data.user = app.locals.user;
     ejs.renderFile("views/"+url+".ejs", data, (err, result) => {
         if (err) {
