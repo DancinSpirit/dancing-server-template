@@ -189,12 +189,12 @@ window.addEventListener('popstate',async function(event){
         event.state.states = ["main","login"];
         event.state.databaseObjects = [false,false];
         event.state.customData = [false,false];
-        window.history.pushState({states:event.state.states,databaseObjects:event.state.databaseObjects,customData:event.state.customData}, "login", "/main/login");
+        window.history.replaceState({states:event.state.states,databaseObjects:event.state.databaseObjects,customData:event.state.customData}, "login", "/main/login");
     }else if(event.state.states[1]=="login"||event.state.states[1]=="register"){
         event.state.states = ["main","home"];
         event.state.databaseObjects = [false,false];
         event.state.customData = [false,false];
-        window.history.pushState({states:event.state.states,databaseObjects:event.state.databaseObjects,customData:event.state.customData}, "home", "/main/home");
+        window.history.replaceState({states:event.state.states,databaseObjects:event.state.databaseObjects,customData:event.state.customData}, "home", "/main/home");
     }
     let startingIndex = 0;
     for(let x=0; x<event.state.states.length; x++){
