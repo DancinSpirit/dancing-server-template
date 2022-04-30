@@ -164,6 +164,17 @@ const loadState = async function(x, animation){
 }
 
 const loadStates = async function(){
+    if(!user){
+        states = ["main","login"];
+        databaseObjects = [false,false];
+        customData = [false,false];
+        window.history.replaceState({states:states,databaseObjects:databaseObjects,customData:customData}, "login", "/main/login");
+    }else if(states[1]=="login"||states[1]=="register"){
+        states = ["main","home"];
+        databaseObjects = [false,false];
+        customData = [false,false];
+        window.history.replaceState({states:states,databaseObjects:databaseObjects,customData:customData}, "home", "/main/home");
+    }
     for(let x=0; x<states.length; x++){
         await loadState(x);
     }
