@@ -164,7 +164,7 @@ const loadState = async function(x, animation){
 }
 
 const loadStates = async function(){
-    if(!user){
+    if(!user&&(states[1]!="login"||states[1]!="register")){
         states = ["main","login"];
         databaseObjects = [false,false];
         customData = [false,false];
@@ -185,7 +185,7 @@ window.history.replaceState({states:states,databaseObjects:databaseObjects,custo
 loadStates();
 
 window.addEventListener('popstate',async function(event){
-    if(!user){
+    if(!user&&(event.state.states[1]!="login"||event.state.states[1]!="register")){
         event.state.states = ["main","login"];
         event.state.databaseObjects = [false,false];
         event.state.customData = [false,false];
