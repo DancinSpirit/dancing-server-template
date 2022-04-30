@@ -92,13 +92,18 @@ const componentCheck = async function(component){
         for(let y=0; y<components.length; y++){
             let databaseObjects = [];
             let customData = {};
-            if(components[y].split("<database>").length>1)
-            for(let x=0; x<components[y].split("<database>")[1].split("|").length; x++){
-                databaseObjects.push({name: components[y].split("<database>")[1].split("|")[x].split("=")[0], id: components[y].split("<database>").split("|")[x].split("=")[1].split("</database>")});
+            if(components[y].split("<database>").length>1){
+                for(let x=0; x<components[y].split("<database>")[1].split("|").length; x++){
+                    databaseObjects.push({name: components[y].split("<database>")[1].split("|")[x].split("=")[0], id: components[y].split("<database>").split("|")[x].split("=")[1].split("</database>")});
+                }
             }
-            if(components[y].split("<data>").length>1)
-            for(let x=0; x<components[y].split("<data>")[1].split("|").length; x++){
-                customData[components[y].split("<data>")[1].split("|")[x].split("=")[0]] = components[y].split("<data>")[1].split("|")[x].split("=")[1].split("</data>")[0];
+            if(components[y].split("<data>").length>1){
+                for(let x=0; x<components[y].split("<data>")[1].split("|").length; x++){
+                    customData[components[y].split("<data>")[1].split("|")[x].split("=")[0]] = components[y].split("<data>")[1].split("|")[x].split("=")[1].split("</data>")[0];
+                }
+            }
+            if(!databaseObjects.length){
+                databaseObjects = false;
             }
             let newComponent = await loadComponent(components[y].split("<database>")[0].split("<data>")[0], databaseObjects, customData); 
             newComponent = await componentCheck(newComponent);

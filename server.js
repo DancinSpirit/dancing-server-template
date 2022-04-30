@@ -36,6 +36,7 @@ app.use(session({
 /* Send User Information */
 app.use(async function(req,res,next){
     if(req.session.currentUser){
+        req.session.currentUser = await db.User.findById(req.session.currentUser._id)
         app.locals.user = req.session.currentUser;
     }else{
         app.locals.user = false;
@@ -74,26 +75,30 @@ app.post("/logout", async function(req,res){
 
 /* Home Page Loading */
 app.get("/", function(req,res){
-    res.render('base',{states: ["start"], databaseObjects: [{}], customData: [{}]});
+    res.render('base',{states: ["start"], databaseObjects: [false], customData: [false]});
 })
 
 /* Page Loading */
 app.get("/*", function(req, res){
     let states = [];
-    let databaseObjects;
-    let customData;
+    for(let x=1; x<req.url.split("/").length; x++){
+        states.push(req.url.split("/")[x]);
+    }
+    let databaseObjects = [];
+    let customData = [];
     if(req.body.databaseObjects){
         databaseObjects = req.body.databaseObjects;
     }else{
-        databaseObjects = false;
+        for(let x=0; x<states.length; x++){
+            databaseObjects[x] = false;
+        }
     }
     if(req.body.customData){
         customData = req.body.customData;
     }else{
-        customData = false;
-    }
-    for(let x=1; x<req.url.split("/").length; x++){
-        states.push(req.url.split("/")[x]);
+        for(let x=0; x<states.length; x++){
+            customData[x] = false;
+        }
     }
     res.render('base',{states: states, databaseObjects: databaseObjects, customData: customData});
 })
@@ -115,14 +120,15 @@ app.post("/update/:databaseObject/:id", async function(req,res){
 app.post("/component/:component", async function(req,res){
     let data = {};
     let url = `components/${req.params.component.toLowerCase()}`;
-    if(req.body.customData){
+    if(req.body.customData != "false"){
         data = req.body.customData;
     }
-    if(req.body.databaseObjects){
+    if(req.body.databaseObjects != "false"){
         for(let x=0; x<req.body.databaseObjects.length; x++){
             data[req.body.databaseObjects[x].name]  = await eval(`db.${req.body.databaseObjects[x].name}.findById('${req.body.databaseObjects[x].id}')`)
         }
     }
+    data.user = app.locals.user;
     ejs.renderFile("views/"+url+".ejs", data, (err, result) => {
         if (err) {
             res.render("error",{error:err});
