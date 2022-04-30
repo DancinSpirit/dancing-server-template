@@ -150,11 +150,11 @@ window.history.replaceState({states:states,databaseObjects:databaseObjects,custo
 loadStates();
 
 window.addEventListener('popstate',async function(event){
+    await deactivateButtons();
     for(let x=0; x<event.state.states.length; x++){
         states = event.state.states;
         databaseObjects = event.state.databaseObjects;
         customData = event.state.customData;
-        await deactivateButtons();
         await loadState(x);
     }
 })
