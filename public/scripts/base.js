@@ -174,7 +174,15 @@ window.history.replaceState({states:states,databaseObjects:databaseObjects,custo
 loadStates();
 
 window.addEventListener('popstate',async function(event){
+    let startingIndex = 0;
     for(let x=0; x<event.state.states.length; x++){
+        if(x<states.length){
+            if(states[x]==event.state.states[x]){
+                startingIndex++;
+            }
+        }
+    }
+    for(let x=startingIndex; x<event.state.states.length; x++){
         states = event.state.states;
         databaseObjects = event.state.databaseObjects;
         customData = event.state.customData;
