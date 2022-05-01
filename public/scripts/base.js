@@ -259,6 +259,8 @@ window.onload = function(){
         if(equalArrays(stateCookie,states)){
             databaseObjects = databaseObjectsCookie;
             customData = customDataCookie;
+        }else{
+            window.history.replaceState({states:states,databaseObjects:databaseObjects,customData:customData}, "start", window.location.href); 
         }
     }else{
         window.history.replaceState({states:states,databaseObjects:databaseObjects,customData:customData}, "start", window.location.href);
