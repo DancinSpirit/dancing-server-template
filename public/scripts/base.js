@@ -169,7 +169,7 @@ const loadStates = async function(){
         databaseObjects = [false,false];
         customData = [false,false];
         window.history.replaceState({states:states,databaseObjects:databaseObjects,customData:customData}, "login", "/main/login");
-    }else if(states[1]=="login"||states[1]=="register"){
+    }else if(user&&(states[1]=="login"||states[1]=="register")){
         states = ["main","home"];
         databaseObjects = [false,false];
         customData = [false,false];
@@ -180,17 +180,13 @@ const loadStates = async function(){
     }
 }
 
-window.history.replaceState({states:states,databaseObjects:databaseObjects,customData:customData}, "start", window.location.href);
-
-loadStates();
-
 window.addEventListener('popstate',async function(event){
     if(!user&&(event.state.states[1]!="login"||event.state.states[1]!="register")){
         event.state.states = ["main","login"];
         event.state.databaseObjects = [false,false];
         event.state.customData = [false,false];
         window.history.replaceState({states:event.state.states,databaseObjects:event.state.databaseObjects,customData:event.state.customData}, "login", "/main/login");
-    }else if(event.state.states[1]=="login"||event.state.states[1]=="register"){
+    }else if(user&&(event.state.states[1]=="login"||event.state.states[1]=="register")){
         event.state.states = ["main","home"];
         event.state.databaseObjects = [false,false];
         event.state.customData = [false,false];
@@ -211,3 +207,61 @@ window.addEventListener('popstate',async function(event){
         await loadState(x);
     }
 })
+
+function setCookie(name, value) {        
+    let date = new Date();        
+    date.setTime(date.getTime() + (10 * 1000));        
+    const expires = "expires=" + date.toUTCString();        
+    document.cookie = name + "=" + value + "; " + expires + "; path=/";
+}
+
+function getCookie(name){
+    let cookies = document.cookie.split("; ");
+    for(let x=0; x<cookies.length; x++){
+        if(cookies[x].split("=")[0]==name){
+            return cookies[x].split("=")[1];
+        }
+    }
+}
+
+function convertCookieToArray(cookie){
+    let array = [];
+    for(let x=0; x<cookie.split(",").length; x++){
+        array.push(cookie.split(",")[x]);
+    }
+    return array;
+}
+
+function equalArrays(array1,array2){
+    if (array1.length === array2.length) {
+        return array1.every((element, index) => {
+            if (element === array2[index]) {
+                return true;
+            }
+            return false;
+        });
+      }
+      return false;
+    }
+
+window.onunload = function(){
+    setCookie('refreshed',true);
+    setCookie('states', states);
+    setCookie('databaseObjects', JSON.stringify(databaseObjects));
+    setCookie('customData', JSON.stringify(customData));
+}
+
+window.onload = function(){
+    if(typeof getCookie("refreshed") != "undefined"){
+        let stateCookie = convertCookieToArray(getCookie("states"));
+        let databaseObjectsCookie = JSON.parse(getCookie("databaseObjects"));    
+        let customDataCookie = JSON.parse(getCookie("customData"));
+        if(equalArrays(stateCookie,states)){
+            databaseObjects = databaseObjectsCookie;
+            customData = customDataCookie;
+        }
+    }else{
+        window.history.replaceState({states:states,databaseObjects:databaseObjects,customData:customData}, "start", window.location.href);
+    } 
+    loadStates();
+}

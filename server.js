@@ -47,12 +47,12 @@ app.use(async function(req,res,next){
 /* Login */
 app.post("/login", async function(req, res){
     const foundUser = await db.User.findOne({username: req.body.username});
-    if(!foundUser) return res.send(false)
     if(!foundUser) return res.send({loggedIn: false, error: "That username doesn't exist!"})
     const match = await bcrypt.compare(req.body.password, foundUser.password);
     if(!match) return res.send({loggedIn: false, error: "Password Invalid"});
     req.session.currentUser = foundUser;
-    return res.send({loggedIn: true, user: foundUser});
+    app.locals.user = req.session.currentUser;
+    return res.send({loggedIn: true, user: app.locals.user});
 })
 /* Register */
 app.post("/register", async function(req, res){
@@ -64,7 +64,7 @@ app.post("/register", async function(req, res){
     const newUser = await db.User.create(req.body);
     req.session.currentUser = newUser;
     app.locals.user = req.session.currentUser;
-    return res.send({registered: true, user: foundUser});
+    return res.send({registered: true, user: app.locals.user});
 })
 /* Logout */
 app.post("/logout", async function(req,res){
