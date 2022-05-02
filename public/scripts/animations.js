@@ -1,6 +1,6 @@
 let transitionSpeed = 1000;
-
-const left = async function(state, component){
+const animations = {};
+animations.left = async function(state, component){
     return new Promise((resolve)=>{
         $(`#sub-${state}`).attr("id",`old-sub-${state}`);
         $(`#sub-${state}-container`).append(`<section id="sub-${state}"></section>`)
@@ -15,7 +15,7 @@ const left = async function(state, component){
         },transitionSpeed)
     })
 }
-const right = async function(state, component){
+animations.right = async function(state, component){
     return new Promise((resolve)=>{
         $(`#sub-${state}`).attr("id",`old-sub-${state}`);
         $(`#sub-${state}-container`).prepend(`<section id="sub-${state}"></section>`)
@@ -33,7 +33,7 @@ const right = async function(state, component){
         },10);
     })
 }
-const up = async function(state, component){
+animations.up = async function(state, component){
     return new Promise((resolve)=>{
         $(`#sub-${state}-container`).css("display","block");
         $(`#sub-${state}`).attr("id",`old-sub-${state}`);
@@ -50,7 +50,7 @@ const up = async function(state, component){
         },transitionSpeed)
     })
 }
-const down = async function(state, component){
+animations.down = async function(state, component){
     return new Promise((resolve)=>{
         $(`#sub-${state}-container`).css("display","block");
         $(`#sub-${state}`).attr("id",`old-sub-${state}`);
@@ -71,7 +71,7 @@ const down = async function(state, component){
     })
 }
 
-const none = async function(state, component){
+animations.none = async function(state, component){
     return new Promise((resolve)=>{
         $(`#sub-${state}`).attr("id",`old-sub-${state}`);
         $(`#sub-${state}-container`).prepend(`<section id="sub-${state}"></section>`)

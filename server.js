@@ -105,14 +105,14 @@ app.get("/*", function(req, res){
 
 /* Database Loading */
 app.get("/data/:databaseObject/:id", async function(req,res){
-    const data = await eval(`db.${req.params.databaseObject.charAt(0).toUpperCase() + req.params.databaseObject.slice(1)}.findById('${req.params.id}')`)
+    const data = await db[req.params.databaseObject.charAt(0).toUpperCase() + req.params.databaseObject.slice(1)].findById(req.params.id);
     res.send(data);
 })
 
 /* Database Updating */
 app.post("/update/:databaseObject/:id", async function(req,res){
     let databaseObject = req.params.databaseObject.charAt(0).toUpperCase() + req.params.databaseObject.slice(1);
-    let foundObject = await eval(`db.${databaseObject}.findByIdAndUpdate('${req.params.id}',${JSON.stringify(req.body)})`);
+    let foundObject = await db[databaseObject].findByIdAndUpdate(req.params.id,JSON.stringify(req.body));
     res.send(foundObject);
 })
 
@@ -125,7 +125,7 @@ app.post("/component/:component", async function(req,res){
     }
     if(req.body.databaseObjects != "false"&&(typeof req.body.databaseObjects != "undefined")){
         for(let x=0; x<req.body.databaseObjects.length; x++){
-            data[req.body.databaseObjects[x].name]  = await eval(`db.${req.body.databaseObjects[x].name}.findById('${req.body.databaseObjects[x].id}')`)
+            data[req.body.databaseObjects[x].name.toLowerCase()]  = await db[req.body.databaseObjects[x].name].findById(req.body.databaseObjects[x].id);
         }
     }
     console.log(data)

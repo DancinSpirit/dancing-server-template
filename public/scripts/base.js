@@ -153,12 +153,12 @@ const loadState = async function(x, animation){
         previousState = states[x-1];
     }
     if(animation){
-        await eval(`${animation}(previousState,component)`)
+        await animations[animation](previousState,component);
     }else{
         if(component.includes("<animation>")){
-            await eval(`${component.split("<animation>")[1].split("</animation")[0]}(previousState, component)`)
+            await animations[component.split("<animation>")[1].split("</animation")[0]](previousState, component);
         }else{
-            await left(previousState, component);
+            await animations.left(previousState, component);
         }
     }
 }
